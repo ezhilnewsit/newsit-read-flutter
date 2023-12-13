@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "62476281347",
+    "project_id": "newsit-31c14",
+    "storage_bucket": "newsit-31c14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62476281347:android:6dfb2f261bddc3bc6e1036",
+        "android_client_info": {
+          "package_name": "com.example.newsit_read"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "62476281347-9hb4a27b94uhi53vfqgcs7qrm6rc2kb9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6e2NWlawQPD8SnWX9d9DOwdCElz0cdHE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "62476281347-9hb4a27b94uhi53vfqgcs7qrm6rc2kb9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
