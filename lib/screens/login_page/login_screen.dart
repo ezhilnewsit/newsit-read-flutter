@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:newsit_read/utils/fonts.dart';
 
 import '../../base/base_state.dart';
+import '../../router.dart';
 import '../../utils/color_resources.dart';
+import '../localization/locale_constant.dart';
+import '../localization/model/lang_model_data.dart';
 import 'login_bloc.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,12 +21,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late LoginBloc bloc;
-   
+
   TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  bool _isLoggedIn = false;
+  bool isGetStarted = false;
   GoogleSignInAccount? _userObj;
   GoogleSignIn _googleSignIn = GoogleSignIn();
+  int? selectedOption;
+
 
   GoogleSignInAccount? _currentUser;
 
@@ -30,11 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     bloc = BlocProvider.of<LoginBloc>(context);
-
-
+    if(nameController.text.isNotEmpty) {
+      isGetStarted = true;
+    }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,193 +55,173 @@ class _LoginScreenState extends State<LoginScreen> {
             } else if (state is SuccessState) {
 
             }
-            return  SafeArea(
+            return SafeArea(
               child: Scaffold(
-                appBar: AppBar(
-                  backgroundColor: ColorResource.colorE02E23,
-                  // centerTitle: true,
-                    title: Text("Login Page",
-                    style: TextStyle(color: Colors.white),
-                    )),
-                body:
-                Center(
+                body: Padding(
+                  padding: EdgeInsets.all(20.0),
                   child: Column(
-
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(50),
-                        child: Text('NEWSIT - READ', style: TextStyle(fontSize: 25, color: Colors.black),),
-                      ),
-                      Container(
-                        child: _isLoggedIn
-                            ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Row(
                           children: [
-                            Image.network(_userObj!.photoUrl.toString()),
-                            Text(_userObj!.displayName.toString()),
-                            Text(_userObj!.email),
-                            TextButton(
-                                onPressed: () {
-                                  _googleSignIn.signOut().then((value) {
-                                    setState(() {
-                                      _isLoggedIn = false;
-                                    });
-                                  }).catchError((e) {});
-                                },
-                                child: Text("Logout"))
+                            Text('Welcome !',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: ColorResource.color333333,
+                              fontFamily: 'DMSans-Bold'
+                            ),
+                            ),
                           ],
-                        )
-                            : Center(
-                          child: ElevatedButton(
-                            child: Text("Login with Google"),
-                            onPressed: () {
-                              _googleSignIn.signIn().then((userData) {
-                                setState(() {
-                                  _isLoggedIn = true;
-                                  _userObj = userData!;
-                                });
-                              }).catchError((e) {
-                                print(e);
-                              });
-                            },
-                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [Text('How can we call you?',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: ColorResource.color333333,
+                                fontFamily: 'DMSans-Light'
+                            ),
+                          )],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Column(
+                          children: [
+                            TextFormField(
+                              controller: nameController,
+
+
+                              decoration: const InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide:  BorderSide(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+
+                                prefixIcon: Icon(Icons.person_pin),
+
+                                hintText: 'Enter your name',
+                                hintStyle: TextStyle(
+                                    fontFamily: 'DMSans-Light',
+                                   color:  Colors.grey,
+                                )
+                              ),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  if(value!.isNotEmpty) {
+                                    isGetStarted = true;
+                                  } else {
+                                    isGetStarted = false;
+                                  }
+                                });
+                              },
+
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 15,),
+                        const Column(
+                          children: [
+                            Text(' Select Language',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'DMSans-Light'
+                              ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            ListTile(
+                              title: const Text('English'),
+                              leading: Radio(
+                                value: 1,
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value;
+
+                                  });
+                                }
+                                // onChanged: ( LanguageData? language) {
+                                //   setState(() {
+                                //     // selectedOption = value;
+                                //     changeLanguage(context, language!.languageCode);
+                                //     // isGetStarted =
+                                //   });
+                                // },
+                              ),
+                            ),
+
+                            ListTile(
+                              title: const Text('தமிழ்'),
+                              leading: Radio(
+                                value: 2,
+                                groupValue: selectedOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedOption = value;
+                                    print("Button value: $value");
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   children: [
+                        //     Container(
+                        //       // color: Colors.red,
+                        //       height:150,
+                        //       width: 150,
+                        //     ),
+                        //     Container(
+                        //       // color: Colors.green,
+                        //       height: 150,
+                        //       width: 150,
+                        //     ),
+                        //   ],
+                        // ),
+                        Expanded(
+                            child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, AppRoutes.signUpScreen);
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    margin: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(10),
+                                    alignment: Alignment.center,
+                                    decoration:  BoxDecoration(
+                                      color: isGetStarted ? ColorResource.colorE22C24  : Colors.grey,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10.0)),
+                                    ),
+                                    child: const Text(
+                                      "Get Started",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: ColorResource.colorFFFFFF,
+                                          fontFamily: 'DMSans-Medium'),
+                                    ),
+                                  ),
+                                )))
+                      ]),
                 ),
               ),
             );
-
-        //       Scaffold(
-        //       body:  Padding(
-        // padding:  const EdgeInsets.all(10),
-        // child:
-
-        // ListView(
-        //   children: <Widget>[
-        //     Container(
-        //         alignment: Alignment.center,
-        //         padding: const EdgeInsets.all(10),
-        //         child: const Text(
-        //           'Sign in',
-        //           style: TextStyle(fontSize: 20),
-        //         )),
-        //     Container(
-        //       padding: const EdgeInsets.all(10),
-        //       child: TextField(
-        //         controller: nameController,
-        //         decoration: const InputDecoration(
-        //           border: OutlineInputBorder(),
-        //           labelText: 'User Name',
-        //         ),
-        //       ),
-        //     ),
-        //     Container(
-        //       padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-        //       child: TextField(
-        //         obscureText: true,
-        //         controller: passwordController,
-        //         decoration: const InputDecoration(
-        //           border: OutlineInputBorder(),
-        //           labelText: 'Password',
-        //         ),
-        //       ),
-        //     ),
-        //     TextButton(
-        //       onPressed: () {
-        //         //forgot password screen
-        //       },
-        //       child: const Text('Forgot Password',),
-        //     ),
-        //     Container(
-        //         height: 50,
-        //         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        //         child: ElevatedButton(
-        //           child: const Text('Login'),
-        //           onPressed: () {
-        //             print(nameController.text);
-        //             print(passwordController.text);
-        //           },
-        //         )
-        //     ),
-        //     Row(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       children: <Widget>[
-        //         const Text('Does not have account?'),
-        //         TextButton(
-        //           child: const Text(
-        //             'Sign in',
-        //             style: TextStyle(fontSize: 20),
-        //           ),
-        //           onPressed: () {
-        //             //signup screen
-        //           },
-        //         )
-        //       ],
-        //     ),
-        //     SizedBox(height: 50,),
-        //     Container(
-        //       height: 50,
-        //       decoration: BoxDecoration(
-        //         border: Border.all(
-        //             color: HexColor("#E2E2E2"),
-        //             width: 1),
-        //         borderRadius:
-        //         BorderRadius.circular(16),
-        //       ),
-        //       child: InkWell(
-        //         onTap: () {
-        //
-        //
-        //         },
-        //         child: Row(
-        //           children: [
-        //             Expanded(
-        //                 flex: 0,
-        //                 child: Container(
-        //                   margin:
-        //                   const EdgeInsets.only(
-        //                       left: 16.0,
-        //                       right: 16),
-        //                   child: Image(
-        //                     image: AssetImage(
-        //                         'assets/png/google.png'),
-        //                     width: 18,
-        //                     height: 18,
-        //                   ),
-        //                 )),
-        //             Expanded(
-        //               flex: 0,
-        //               child: Container(
-        //                 width: 1,
-        //                 height: 24,
-        //                 // color: HexColor("#E2E2E2"),
-        //               ),
-        //             ),
-        //             Expanded(
-        //               flex: 1,
-        //               child: Container(
-        //                 child: Center(
-        //                     child: Text(
-        //                       'Google',
-        //                       style: TextStyle(
-        //                           fontSize: 14,
-        //                           color:
-        //                           HexColor("#717171"),
-        //                           fontWeight:
-        //                           FontWeight.w500),
-        //                     )),
-        //               ),
-        //             )
-        //           ],
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // )
-        //       )
-        //     );
           }),
     );
   }

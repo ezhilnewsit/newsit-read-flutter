@@ -11,6 +11,18 @@ class PreferenceHelper {
     return prefs.getBool(Constants.getTrack) ?? false;
   }
 
+    static setBearer(String? value) async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (value is String) {
+        await prefs.setString(SharedPrefKeys.bearerToken, value);
+      }
+    }
+
+    static Future<String> getBearer() async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString(SharedPrefKeys.bearerToken) ?? '';
+    }
+
 
 }
 

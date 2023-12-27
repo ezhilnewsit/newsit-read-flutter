@@ -20,9 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    _timer = Timer(Duration(milliseconds: 500), () {
-      // SOMETHING
-    });
+
     print('-=-=-=-=-= SPLADHS SCREEN');
     super.initState();
   }
@@ -32,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
@@ -40,7 +39,8 @@ class _SplashScreenState extends State<SplashScreen> {
               child: SizedBox(
                 width: 260,
                 height: 113,
-                child: Image.asset(
+
+          child: Image.asset(
                   ImageResource.splashlogo,
                 ),
               ),
