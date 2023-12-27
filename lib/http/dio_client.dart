@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 
 import '../utils/base_equatable.dart';
+import '../utils/preference_helpher.dart';
 import 'httpurls.dart';
 import 'logging.dart';
 
@@ -33,6 +34,11 @@ class DioClient {
   }
 
   //developer want get from stored while login/register
+  static Future<String> getTokenFromSharedValues() async {
+    String? bearer;
+    await PreferenceHelper.getBearer().then((value) => bearer = value);
+    return bearer!;
+  }
 
   static dynamic errorHandling(DioError e) {
     debugPrint('dio exception ${e.message}');

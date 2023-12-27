@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../router.dart';
 import '../utils/base_equatable.dart';
 import '../utils/contants.dart';
+import '../utils/preference_helpher.dart';
+import '../utils/singleton.dart';
 import 'dio_client.dart';
 
 class APIRepository {
@@ -14,17 +16,14 @@ class APIRepository {
         dynamic userArguments,
         BuildContext? context,
         bool isBearerTokenNeed = true,
-        bool isAuthKeyNeeded = false,
-        bool isCsrfKeyNeeded = false,
-        bool isDeviceTokenNeeded=false,
       }) async {
-    // String bearertoken = '';
-    // await PreferenceHelper.getBearer().then((value) {
-    //   if (value != null && isBearerTokenNeed) {
-    //     bearertoken = value;
-    //     AidivaFlashSingleton.instance.bearerToken=value;
-    //   }
-    // });
+    String bearertoken = '';
+    await PreferenceHelper.getBearer().then((value) {
+      if (value != null && isBearerTokenNeed) {
+        bearertoken = value;
+         // AidivaFlashSingleton.instance.bearerToken=value;
+      }
+    });
   
 
     dynamic returnableValues;
@@ -46,7 +45,6 @@ class APIRepository {
           {
             response = await dynamicApiRequest.get(
               url,
-                // cancelToken:cancelToken
             );
         
             break;
@@ -55,7 +53,6 @@ class APIRepository {
           {
             response = await dynamicApiRequest.put(
               url,
-              // data: userArguments!.toJson(),
               data: userArguments!,
             );
            
@@ -91,13 +88,13 @@ class APIRepository {
       // if (response.data is String && pbKey != null) {
       //   returnableValues = jsonDecode(await decryptData(pbKey, response.data));
       // } else {
-      //   if (ApiRequestMethod.get != method &&
-      //       response.data['message'] != null &&
-      //       response.data['message'] != '') {
-      //  //   showToast(AidivaFlashSingleton.instance.errorMapValues?[response.data['message']] ?? response.data['message']);
-      //   }
+        if (ApiRequestMethod.get != method &&
+            response.data['message'] != null &&
+            response.data['message'] != '') {
+       //   showToast(AidivaFlashSingleton.instance.errorMapValues?[response.data['message']] ?? response.data['message']);
+        }
 
-      //   returnableValues = response.data;
+        returnableValues = response.data;
       // }
     } on DioError catch (e) {
       dynamic errorValues;
@@ -138,7 +135,7 @@ class APIRepository {
           showToast(returnableValues);
         }
         else if (e.response!.statusCode == 400) {
-          // showToast('Please try again');
+           showToast('Please try again');
          
           showToast(returnableValues);
         }
